@@ -1,8 +1,11 @@
 import pandas as pd
-import random
+import numpy as np
+import matplotlib.pyplot as plt
+import seaborn as sns
 from sklearn.model_selection import train_test_split
-from sklearn.preprocessing import LabelEncoder
 from sklearn.ensemble import RandomForestRegressor
+from sklearn.preprocessing import LabelEncoder
+import random
 
 # Load dataset
 def load_data(file_path):
@@ -52,9 +55,8 @@ def generate_realistic_variations(top_campaign):
     return variations[:3]
 
 # Predict conversion rate for a given variation using the trained model
-# Predict conversion rate for a given variation using the trained model
 def predict_ab_conversion(model, encoders, top_campaign):
-    print("\n✅ Top-performing campaign:", top_campaign['Campaign_ID'])
+    print("\nTop-performing campaign:", top_campaign['Campaign_ID'])
     
     ab_variations = generate_realistic_variations(top_campaign)
     predictions = []
@@ -64,9 +66,9 @@ def predict_ab_conversion(model, encoders, top_campaign):
 
     for i, variation in enumerate(ab_variations):
         # Encode categorical variables with handling for unseen labels
-        campaign_type_encoded = encoders['Campaign_Type'].transform([variation['Campaign_Type']])[0] if variation['Campaign_Type'] in encoders['Campaign_Type'].classes_ else encoders['Campaign_Type'].transform(['Unknown'])[0]
-        channel_used_encoded = encoders['Channel_Used'].transform([variation['Channel_Used']])[0] if variation['Channel_Used'] in encoders['Channel_Used'].classes_ else encoders['Channel_Used'].transform(['Unknown'])[0]
-        
+        campaign_type_encoded = encoders['Campaign_Type'].transform([variation['Campaign_Type']])[0]
+        channel_used_encoded = encoders['Channel_Used'].transform([variation['Channel_Used']])[0]
+
         # Create a DataFrame with the same columns as used for training
         test_data = pd.DataFrame([[campaign_type_encoded, top_campaign['Target_Audience'], channel_used_encoded, top_campaign['Clicks']]], columns=feature_columns)
         
@@ -74,14 +76,13 @@ def predict_ab_conversion(model, encoders, top_campaign):
         predicted_rate = model.predict(test_data)[0]
         
         predictions.append((variation, predicted_rate))
-        print(f"🔹 Variation {i+1}: {variation} -> Predicted Conversion Rate: {predicted_rate:.2f}%")
+        print(f"🔹 Variation {i+1}: Campaign Type: {variation['Campaign_Type']}, Channel Used: {variation['Channel_Used']} -> Predicted Conversion Rate: {predicted_rate:.2f}%")
     
     # Select the best variation based on highest predicted conversion rate
     best_variation = max(predictions, key=lambda x: x[1])
     
-    print(f"\n🏆 Recommended A/B Test Variation: {best_variation[0]} with Predicted Conversion Rate: {best_variation[1]:.2f}%")
+    print(f"\nRecommended A/B Test Variation: Campaign Type: {best_variation[0]['Campaign_Type']}, Channel Used: {best_variation[0]['Channel_Used']} with Predicted Conversion Rate: {best_variation[1]:.2f}%")
     return best_variation
-
 
 # Get user input for the new campaign
 def get_user_input():
@@ -120,7 +121,6 @@ model = train_model(dataset)
 
 # Get user input for the new campaign
 new_campaign = get_user_input()
-# Add new campaign to dataset using pd.concat() instead of append()
 new_campaign_df = pd.DataFrame([new_campaign])  # Convert new_campaign to a DataFrame
 dataset = pd.concat([dataset, new_campaign_df], ignore_index=True)
 
