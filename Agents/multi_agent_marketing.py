@@ -10,7 +10,7 @@ import torch
 
 # Load datasets
 ad_performance_data = pd.read_csv("D:/Projects/Datazen/AdGeniusAI-datathon2025/Data/ad_performance.csv")
-customer_behavior_data = pd.read_csv("D:/Projects/Datazen/AdGeniusAI-datathon2025/Data/marketing_campaign_dataset.csv")
+customer_behavior_data = pd.read_csv("D:/Projects/Datazen/AdGeniusAI-datathon2025/Data/campaign.csv")
 
 # Ensure column names are properly formatted
 ad_performance_data.columns = ad_performance_data.columns.str.strip()
