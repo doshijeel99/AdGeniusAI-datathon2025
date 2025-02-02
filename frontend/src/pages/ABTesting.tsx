@@ -199,7 +199,7 @@ function ABTesting() {
           >
             <div className="flex items-center gap-2 mb-4">
               <LineChart className="w-6 h-6 text-purple-600" />
-              <h2 className="text-xl font-semibold">ML Model Predictions</h2>
+              <h2 className="text-xl font-semibold">Campaign Performance Analysis</h2>
             </div>
             
             <div className="space-y-4">
@@ -231,9 +231,9 @@ function ABTesting() {
               </div>
 
               <div className="mt-6 p-4 bg-purple-50 rounded-lg border border-purple-100">
-                <h3 className="font-medium text-purple-800 mb-2">ML Model Recommendation</h3>
+                <h3 className="font-medium text-purple-800 mb-2">Recommended Strategy</h3>
                 <p className="text-purple-700">
-                  Based on our machine learning model analysis, the recommended A/B test variation is:
+                Based on our advanced analytics and market insights, here's your optimal campaign strategy:
                 </p>
                 <p className="mt-2 font-medium text-purple-900">
                   Campaign Type: {results.bestVariation.campaignType}<br />

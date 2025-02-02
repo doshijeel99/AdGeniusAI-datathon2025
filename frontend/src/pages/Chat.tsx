@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import {
   Send,
   Brain,
@@ -22,6 +23,7 @@ interface Message {
 }
 
 function Chat() {
+  const navigate = useNavigate();
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState('');
   const [isTyping, setIsTyping] = useState(false);
@@ -29,27 +31,21 @@ function Chat() {
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   const suggestions = [
-    "Which platform is the most effective for digital marketing?",
+    "Help me create content for my campaign",
+    "I need to analyze my campaign reports",
+    "Can you help with A/B testing?",
     "What are the latest trends in digital marketing?",
     "How can I optimize my ad budget allocation?",
-    "How do I measure content performance?",
-    "What is the role of AI in digital marketing?",
-    "What is the best way to generate quality leads?"
+    "What is the role of AI in digital marketing?"
   ];
 
   const predefinedResponses: { [key: string]: string } = {
-    "Which platform is the most effective for digital marketing?":
-      "The effectiveness of a platform depends on your target audience and goals. For B2B, LinkedIn and Google Ads perform well, while for B2C, platforms like Instagram, Facebook, and TikTok offer strong engagement.",
     "What are the latest trends in digital marketing?":
       "Emerging trends include AI-driven personalization, voice search optimization, influencer marketing growth, interactive content, and short-form video dominance.",
     "How can I optimize my ad budget allocation?":
       "Analyzing past campaign performance, audience behavior, and conversion rates can help optimize ad spend. Consider reallocating budget to high-performing channels while testing new platforms.",
-    "How do I measure content performance?":
-      "Track metrics like engagement rate, click-through rate (CTR), time on page, and conversion rates using tools like Google Analytics and social media insights.",
     "What is the role of AI in digital marketing?":
-      "AI helps with automation, personalized recommendations, predictive analytics, and chatbots to enhance customer engagement and decision-making.",
-    "What is the best way to generate quality leads?":
-      "Leverage content marketing, SEO, paid ads, lead magnets (ebooks, webinars), and retargeting campaigns to attract and convert high-quality leads."
+      "AI helps with automation, personalized recommendations, predictive analytics, and chatbots to enhance customer engagement and decision-making."
   };
 
   useEffect(() => {
@@ -57,7 +53,7 @@ function Chat() {
     if (messages.length === 0) {
       setMessages([{
         id: 'welcome',
-        text: "👋 Hi! I'm your AdGenius AI. I can help you with customer behavior analysis, market trends, budget optimization, and campaign analytics. How can I assist you today?",
+        text: "👋 Hi! I'm your AdGenius AI. I can help you with content generation, reports analysis, and A/B testing. How can I assist you today?",
         sender: 'agent',
         status: 'complete',
         timestamp: new Date()
@@ -67,6 +63,39 @@ function Chat() {
 
   const scrollToBottom = () => {
     messagesEndRef.current?.scrollIntoView({ behavior: "smooth" });
+  };
+
+  const handleNavigation = async (text: string) => {
+    const lowerText = text.toLowerCase();
+    let response = '';
+    let redirectPath = '';
+
+    if (lowerText.includes('content') || lowerText.includes('create') || lowerText.includes('generate')) {
+      response = "I'll redirect you to our Content Generator tool where you can create engaging content for your campaigns.";
+      redirectPath = '/content';
+    } else if (lowerText.includes('report') || lowerText.includes('analysis') || lowerText.includes('analyze')) {
+      response = "I'll take you to our Reports Analysis dashboard where you can view detailed campaign metrics.";
+      redirectPath = '/reports';
+    } else if (lowerText.includes('test') || lowerText.includes('a/b') || lowerText.includes('ab testing')) {
+      response = "I'll redirect you to our A/B Testing tool where you can compare different campaign variations.";
+      redirectPath = '/ab-testing';
+    }
+
+    if (redirectPath) {
+      const agentMessage: Message = {
+        id: Date.now().toString(),
+        text: response,
+        sender: 'agent',
+        status: 'complete',
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, agentMessage]);
+      await new Promise(resolve => setTimeout(resolve, 1500));
+      navigate(redirectPath);
+    }
+
+    return redirectPath;
   };
 
   const handleSubmit = async (e: React.FormEvent) => {
@@ -80,37 +109,110 @@ function Chat() {
       timestamp: new Date()
     };
 
-    const agentMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: '',
-      sender: 'agent',
-      status: 'typing',
-      timestamp: new Date()
-    };
+    setMessages(prev => [...prev, userMessage]);
+    
+    const hasRedirect = await handleNavigation(input);
+    if (!hasRedirect) {
+      const agentMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: '',
+        sender: 'agent',
+        status: 'typing',
+        timestamp: new Date()
+      };
 
-    setMessages(prev => [...prev, userMessage, agentMessage]);
-    setInput('');
-    setIsTyping(true);
+      setMessages(prev => [...prev, userMessage,agentMessage]);
+      setInput('');
+      setIsTyping(true);
 
-    try {
-      const res = await fetch('http://127.0.0.1:8000/allocate-budget', {
+      try {
+        
+        // Simulate API response with predefined responses or default message
+        const responseText = predefinedResponses[input] || "I understand you need help with that. Could you please specify if you'd like to create content, analyze reports, or perform A/B testing?";
+        const bodyData = { product: input };
+      const res = await fetch('http://127.0.0.1:8000/multi_agent_analysis', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ query: input })
-      });
+        body: JSON.stringify(bodyData)
+      });      
 
       if (!res.ok) {
         throw new Error('Network response was not ok');
       }
 
       const data = await res.json();
-      const responseText = data.response || "I'll help you with that request.";
 
-      // Simulate typing effect
+      const budgetAllocation = data.budget_allocation;
+      const insightsReport = data.insights_report;
+
+      const budgetText = Object.entries(budgetAllocation)
+        .map(([channel, percentage]) => `- **${channel}:** ${percentage}%`)
+        .join("\n");
+
+      const formattedResponse = `**Marketing Insights Report**\n\n### **Budget Allocation:**\n${budgetText}\n\n${insightsReport}`;
       let currentText = '';
-      for (let i = 0; i < responseText.length; i++) {
+      for (let i = 0; i < formattedResponse.length; i++) {
         await new Promise(resolve => setTimeout(resolve, 50));
-        currentText += responseText[i];
+        currentText += formattedResponse[i];
+
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === agentMessage.id ? { ...msg, text: currentText } : msg
+          )
+        );
+      }
+      
+
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === agentMessage.id ? { ...msg, status: 'complete' } : msg
+          )
+        );
+      } catch (error) {
+        setMessages(prev =>
+          prev.map(msg =>
+            msg.id === agentMessage.id
+              ? { ...msg, status: 'error', text: "Sorry, there was an error processing your request." }
+              : msg
+          )
+        );
+      } finally {
+        setIsTyping(false);
+      }
+    }
+    
+    setInput('');
+  };
+
+  const handleSuggestionClick = async (suggestion: string) => {
+    const userMessage: Message = {
+      id: Date.now().toString(),
+      text: suggestion,
+      sender: 'user',
+      timestamp: new Date()
+    };
+
+    setMessages(prev => [...prev, userMessage]);
+    setShowSuggestions(false);
+    
+    const hasRedirect = await handleNavigation(suggestion);
+    if (!hasRedirect) {
+      const agentMessage: Message = {
+        id: (Date.now() + 1).toString(),
+        text: '',
+        sender: 'agent',
+        status: 'typing',
+        timestamp: new Date()
+      };
+
+      setMessages(prev => [...prev, agentMessage]);
+      setIsTyping(true);
+
+      const response = predefinedResponses[suggestion] || "I understand you need help with that. Could you please specify if you'd like to create content, analyze reports, or perform A/B testing?";
+      let currentText = '';
+      for (let i = 0; i < response.length; i++) {
+        await new Promise(resolve => setTimeout(resolve, 50));
+        currentText += response[i];
         setMessages(prev =>
           prev.map(msg =>
             msg.id === agentMessage.id ? { ...msg, text: currentText } : msg
@@ -123,57 +225,8 @@ function Chat() {
           msg.id === agentMessage.id ? { ...msg, status: 'complete' } : msg
         )
       );
-    } catch (error) {
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === agentMessage.id
-            ? { ...msg, status: 'error', text: "Sorry, there was an error processing your request." }
-            : msg
-        )
-      );
-    } finally {
       setIsTyping(false);
     }
-  };
-
-  const handleSuggestionClick = async (suggestion: string) => {
-    const userMessage: Message = {
-      id: Date.now().toString(),
-      text: suggestion,
-      sender: 'user',
-      timestamp: new Date()
-    };
-
-    const agentMessage: Message = {
-      id: (Date.now() + 1).toString(),
-      text: '',
-      sender: 'agent',
-      status: 'typing',
-      timestamp: new Date()
-    };
-
-    setMessages(prev => [...prev, userMessage, agentMessage]);
-    setShowSuggestions(false);
-    setIsTyping(true);
-
-    const response = predefinedResponses[suggestion];
-    let currentText = '';
-    for (let i = 0; i < response.length; i++) {
-      await new Promise(resolve => setTimeout(resolve, 50));
-      currentText += response[i];
-      setMessages(prev =>
-        prev.map(msg =>
-          msg.id === agentMessage.id ? { ...msg, text: currentText } : msg
-        )
-      );
-    }
-
-    setMessages(prev =>
-      prev.map(msg =>
-        msg.id === agentMessage.id ? { ...msg, status: 'complete' } : msg
-      )
-    );
-    setIsTyping(false);
   };
 
   return (
