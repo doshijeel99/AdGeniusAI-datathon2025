@@ -1,5 +1,8 @@
 import httpx
+<<<<<<< HEAD
+=======
 import numpy as np
+>>>>>>> aad18d5bc2355b5acf1895fc334ab7c22b5a675d
 import torch
 import re
 from fastapi import FastAPI, HTTPException
@@ -97,6 +100,73 @@ def generate_falcon_prediction(product):
     output = model.generate(**inputs, max_new_tokens=150, do_sample=True, temperature=0.7)
     response = tokenizer.decode(output[0], skip_special_tokens=True)
 
+<<<<<<< HEAD
+    # Extract percentages using regex
+    matches = re.findall(r"(\d+)%", response)
+    percentages = [int(m) for m in matches[:7]]  # Take only 7 values
+
+    if len(percentages) == 7:
+        total = sum(percentages)
+        if total != 100:
+            # Normalize to 100%
+            percentages = [(p / total) * 100 for p in percentages]
+            percentages = [round(p, 2) for p in percentages]  # Round to 2 decimal places
+
+        return {
+            "Google Ads": percentages[0],
+            "Instagram Ads": percentages[1],
+            "YouTube Ads": percentages[2],
+            "Facebook Ads": percentages[3],
+            "TV Ads": percentages[4],
+            "SEO": percentages[5],
+            "Email Marketing": percentages[6]
+        }
+    else:
+        # Return None instead of default values if Falcon fails to provide valid output
+        return None
+
+# Dynamic insights function based on allocation
+def generate_dynamic_insights(budget_allocation):
+    insights = "**Ad Budget Distribution Insights**\n\n"
+    
+    platform_insights = {
+        "Google Ads": "Effective for capturing high-intent users. Google Ads often drives high CTR for users actively searching for specific products or services.",
+        "Facebook Ads": "Great for targeting specific audiences and remarketing to warm leads. Provides broad reach and strong visual formats.",
+        "Instagram Ads": "Perfect for visually-driven campaigns, especially for younger audiences. Works well for influencer marketing and lifestyle brands.",
+        "YouTube Ads": "Highly engaging through video content. Great for storytelling and longer-form ads, offering high engagement.",
+        "TV Ads": "Mass reach during prime-time and seasonal events. Effective for building awareness in larger markets, especially for mainstream products.",
+        "SEO": "Drives organic growth over time. Helps with visibility in search results without the need for direct paid ads.",
+        "Email Marketing": "Personalized communication directly with customers. Effective for nurturing leads and converting existing customers."
+    }
+
+    for platform, percentage in budget_allocation.items():
+        if platform in platform_insights:
+            insights += f"- **{platform}**: Allocating {percentage}% to {platform}.\n"
+            insights += f"  - {platform_insights[platform]}\n\n"
+
+    # Add performance considerations based on allocation
+    insights += "**Performance Metrics Considerations**:\n"
+    
+    if "Google Ads" in budget_allocation and budget_allocation["Google Ads"] > 20:
+        insights += "- **CTR**: Higher Google Ads budgets typically result in a significant increase in CTR for high-intent searches.\n"
+    
+    if "Facebook Ads" in budget_allocation and budget_allocation["Facebook Ads"] > 15:
+        insights += "- **Conversions**: Facebook Ads are great for targeting warm leads and delivering personalized content to boost conversions.\n"
+
+    if "YouTube Ads" in budget_allocation and budget_allocation["YouTube Ads"] > 10:
+        insights += "- **Engagement**: Video content tends to generate high engagement rates, making YouTube Ads perfect for brand storytelling.\n"
+
+    if "TV Ads" in budget_allocation and budget_allocation["TV Ads"] > 10:
+        insights += "- **Mass Reach**: TV Ads can be used to build widespread brand awareness during prime-time slots.\n"
+
+    if "SEO" in budget_allocation and budget_allocation["SEO"] > 5:
+        insights += "- **Organic Growth**: Investing in SEO ensures long-term visibility and drives traffic from organic search.\n"
+
+    if "Email Marketing" in budget_allocation and budget_allocation["Email Marketing"] > 5:
+        insights += "- **Lead Nurturing**: Email marketing is one of the best ways to keep customers engaged and drive conversions.\n"
+
+    return insights
+=======
     # Extracting percentages using regex
     matches = re.findall(r"(\d+)%", response)
     if len(matches) >= 7:
@@ -127,6 +197,7 @@ def generate_insights(budget_allocation):
     output = model.generate(**inputs, max_new_tokens=250, do_sample=True, temperature=0.7)
     response = tokenizer.decode(output[0], skip_special_tokens=True)
     return response
+>>>>>>> aad18d5bc2355b5acf1895fc334ab7c22b5a675d
 
 # FastAPI Endpoint
 @app.post("/allocate_budget")
@@ -138,6 +209,23 @@ async def allocate_budget_endpoint(request: ProductRequest):
         # Step 2: Extract platform-specific percentage-based budget split
         budget_allocation = extract_ad_allocation(market_data) if market_data else None
 
+<<<<<<< HEAD
+        # Step 3: If no valid allocation found, use Falcon-7B for prediction
+        if not budget_allocation:
+            budget_allocation = generate_falcon_prediction(request.product)
+
+        # If Falcon fails to provide valid output, handle gracefully
+        if budget_allocation is None:
+            budget_allocation = {
+                "Google Ads": 30, "Facebook Ads": 20, "YouTube Ads": 15,
+                "LinkedIn Ads": 10, "TV Ads": 15, "SEO": 5, "Email Marketing": 5
+            }
+        
+        # Step 4: Generate dynamic insights based on budget allocation
+        insights = generate_dynamic_insights(budget_allocation)
+
+        return {"budget_allocation_percentage": budget_allocation, "dynamic_insights": insights}
+=======
         if not budget_allocation:
             budget_allocation = generate_falcon_prediction(request.product)
 
@@ -145,6 +233,7 @@ async def allocate_budget_endpoint(request: ProductRequest):
         insights = generate_insights(budget_allocation)
 
         return {"budget_allocation_percentage": budget_allocation, "falcon_insights": insights}
+>>>>>>> aad18d5bc2355b5acf1895fc334ab7c22b5a675d
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
