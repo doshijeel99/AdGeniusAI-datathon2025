@@ -1,4 +1,8 @@
 import httpx
+<<<<<<< HEAD
+=======
+import numpy as np
+>>>>>>> aad18d5bc2355b5acf1895fc334ab7c22b5a675d
 import torch
 import re
 from fastapi import FastAPI, HTTPException
@@ -96,6 +100,7 @@ def generate_falcon_prediction(product):
     output = model.generate(**inputs, max_new_tokens=150, do_sample=True, temperature=0.7)
     response = tokenizer.decode(output[0], skip_special_tokens=True)
 
+<<<<<<< HEAD
     # Extract percentages using regex
     matches = re.findall(r"(\d+)%", response)
     percentages = [int(m) for m in matches[:7]]  # Take only 7 values
@@ -161,6 +166,38 @@ def generate_dynamic_insights(budget_allocation):
         insights += "- **Lead Nurturing**: Email marketing is one of the best ways to keep customers engaged and drive conversions.\n"
 
     return insights
+=======
+    # Extracting percentages using regex
+    matches = re.findall(r"(\d+)%", response)
+    if len(matches) >= 7:
+        return {
+            "Google Ads": int(matches[0]),
+            "Instagram Ads": int(matches[1]),
+            "YouTube Ads": int(matches[2]),
+            "Facebook Ads": int(matches[3]),
+            "TV Ads": int(matches[4]),
+            "SEO": int(matches[5]),
+            "Email Marketing": int(matches[6])
+        }
+    else:
+        return {  # Default split if Falcon fails
+            "Google Ads": 30, "Facebook Ads": 20, "YouTube Ads": 15, 
+            "LinkedIn Ads": 10, "TV Ads": 15, "SEO": 5, "Email Marketing": 5
+        }
+
+# Function to generate detailed insights with performance metrics
+def generate_insights(budget_allocation):
+    query = (
+        f"Here is the ad budget split in percentages:\n{budget_allocation}\n"
+        "Explain why this distribution is effective using key performance metrics: "
+        "CTR (Click-Through Rate), Conversion Rate, Click Rate, Impressions, "
+        "Customer Time on the Product, and other relevant stats."
+    )
+    inputs = tokenizer(query, return_tensors="pt").to(model.device)
+    output = model.generate(**inputs, max_new_tokens=250, do_sample=True, temperature=0.7)
+    response = tokenizer.decode(output[0], skip_special_tokens=True)
+    return response
+>>>>>>> aad18d5bc2355b5acf1895fc334ab7c22b5a675d
 
 # FastAPI Endpoint
 @app.post("/allocate_budget")
@@ -172,6 +209,7 @@ async def allocate_budget_endpoint(request: ProductRequest):
         # Step 2: Extract platform-specific percentage-based budget split
         budget_allocation = extract_ad_allocation(market_data) if market_data else None
 
+<<<<<<< HEAD
         # Step 3: If no valid allocation found, use Falcon-7B for prediction
         if not budget_allocation:
             budget_allocation = generate_falcon_prediction(request.product)
@@ -187,6 +225,15 @@ async def allocate_budget_endpoint(request: ProductRequest):
         insights = generate_dynamic_insights(budget_allocation)
 
         return {"budget_allocation_percentage": budget_allocation, "dynamic_insights": insights}
+=======
+        if not budget_allocation:
+            budget_allocation = generate_falcon_prediction(request.product)
+
+        # Step 3: Generate Falcon insights with CTR, Conversion Rates, etc.
+        insights = generate_insights(budget_allocation)
+
+        return {"budget_allocation_percentage": budget_allocation, "falcon_insights": insights}
+>>>>>>> aad18d5bc2355b5acf1895fc334ab7c22b5a675d
     
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
