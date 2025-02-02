@@ -1,14 +1,14 @@
-import autogen
+import autogen # type: ignore
 from transformers import AutoModelForCausalLM, AutoTokenizer, BitsAndBytesConfig
 import torch
-import pandas as pd
+import pandas as pd # type: ignore
 import numpy as np
-import seaborn as sns
-import matplotlib.pyplot as plt
-from sklearn.model_selection import train_test_split, GridSearchCV
-from sklearn.ensemble import RandomForestRegressor
-from sklearn.metrics import mean_absolute_error, r2_score
-from sklearn.preprocessing import StandardScaler
+import seaborn as sns # type: ignore
+import matplotlib.pyplot as plt # type: ignore
+from sklearn.model_selection import train_test_split, GridSearchCV # type: ignore
+from sklearn.ensemble import RandomForestRegressor # type: ignore
+from sklearn.metrics import mean_absolute_error, r2_score # type: ignore
+from sklearn.preprocessing import StandardScaler # type: ignore
 
 # Set device for CUDA acceleration
 device = "cuda" if torch.cuda.is_available() else "cpu"
