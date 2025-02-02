@@ -5,16 +5,19 @@ import { motion } from 'framer-motion';
 
 function Navbar() {
   return (
-    <div className="w-64 bg-white border-r border-gray-200 h-screen flex flex-col">
-      <div className="p-4 border-b border-gray-200">
-        <motion.div
-          initial={{ scale: 0.9 }}
-          animate={{ scale: 1 }}
-          className="flex items-center gap-2"
-        >
-          <Brain className="w-8 h-8 text-purple-600" />
-          <h1 className="text-xl font-bold text-gray-800">AdGenius AI</h1>
-        </motion.div>
+    <div className="w-72 bg-white border-r border-gray-200 h-screen flex flex-col">
+      <div className="p-6 border-b border-gray-200">
+        <div className="flex items-center gap-3">
+          <div className="w-12 h-12 bg-gradient-to-br from-purple-500 to-blue-500 rounded-xl flex items-center justify-center shadow-lg transform hover:scale-105 transition-transform duration-200 hover:shadow-xl">
+            <Brain className="w-7 h-7 text-white" />
+          </div>
+          <div>
+            <h1 className="text-xl font-bold bg-gradient-to-r from-purple-600 to-blue-600 bg-clip-text text-transparent">
+              AdGenius AI
+            </h1>
+            <p className="text-sm text-gray-500">Marketing Intelligence</p>
+          </div>
+        </div>
       </div>
       
       <nav className="flex-1 p-4 space-y-2">
