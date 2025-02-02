@@ -121,7 +121,7 @@ function Chat() {
         timestamp: new Date()
       };
 
-      setMessages(prev => [...prev, userMessage,agentMessage]);
+      setMessages(prev => [...prev,agentMessage]);
       setInput('');
       setIsTyping(true);
 
@@ -149,8 +149,8 @@ function Chat() {
         .map(([channel, percentage]) => `- **${channel}:** ${percentage}%`)
         .join("\n");
 
-      // const formattedResponse = `**Marketing Insights Report**\n\n### **Budget Allocation:**\n${budgetText}\n\n${insightsReport}`;
-       const formattedResponse = `\n\n${insightsReport}`;
+      // const formattedResponse = `Marketing Insights Report\n\nBudget Allocation:\n${budgetText}\n\n${insightsReport}`;
+      const formattedResponse = `\n\n${insightsReport}`;
       let currentText = '';
       for (let i = 0; i < formattedResponse.length; i++) {
         await new Promise(resolve => setTimeout(resolve, 50));

@@ -5,8 +5,8 @@ import Chat from './pages/Chat';
 import ContentGenerator from './pages/ContentGenerator';
 import Reports from './pages/Reports';
 import { motion } from 'framer-motion';
-import Visualisation from './components/Viusalization';
 import ABTesting from './pages/ABTesting';
+import MarketNews from './pages/MarketNews';
 
 function App() {
   return (
@@ -24,8 +24,8 @@ function App() {
               <Route path="/" element={<Chat />} />
               <Route path="/content" element={<ContentGenerator />} />
               <Route path="/reports" element={<Reports />} />
-              <Route path='/visualization' element={<Visualisation />} />
               <Route path="/ab-testing" element={<ABTesting />} />
+              <Route path="/market-news" element={<MarketNews/>}/>
             </Routes>
           </motion.div>
         </div>

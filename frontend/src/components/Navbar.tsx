@@ -1,6 +1,6 @@
 import React from 'react';
 import { NavLink } from 'react-router-dom';
-import { MessageSquare, FileText, BarChart2, Brain,Beaker } from 'lucide-react';
+import { MessageSquare, FileText, BarChart2, Brain,Beaker, Newspaper } from 'lucide-react';
 import { motion } from 'framer-motion';
 
 function Navbar() {
@@ -76,6 +76,23 @@ function Navbar() {
           <Beaker className="w-5 h-5" />
           <span>A/B Testing</span>
         </NavLink>
+
+
+        <NavLink
+          to="/market-news"
+          className={({ isActive }) =>
+            `flex items-center gap-3 px-4 py-3 rounded-lg transition-all ${
+              isActive
+                ? 'bg-purple-100 text-purple-700'
+                : 'text-gray-600 hover:bg-purple-50'
+            }`
+          }
+        >
+          <Newspaper className="w-5 h-5" />
+          <span>Market News</span>
+        </NavLink>
+
+      
 
       </nav>
       
