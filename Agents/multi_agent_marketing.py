@@ -108,7 +108,7 @@ def generate_marketing_strategy(product: str):
     """
 
     inputs = tokenizer(prompt, return_tensors="pt").to(model.device)
-    output = model.generate(**inputs, max_new_tokens=200, do_sample=True, temperature=0.7)
+    output = model.generate(**inputs, max_new_tokens=200, do_sample=True, temperature=0.6)
     response = tokenizer.decode(output[0], skip_special_tokens=True)
 
     return response
@@ -150,28 +150,28 @@ async def multi_agent_analysis(request: ProductRequest):
         final_budget_allocation = {
             best_ad_type: ad_performance_results["budget_allocation"],
             best_ad_placement: customer_behavior_results["budget_allocation"],
-            "Display Ads": remaining_allocation  # Replaced "Other Channels" with "Display Ads"
+            "Display Ads [Instagram, Facebook, Twitter]": remaining_allocation  # Replaced "Other Channels" with "Display Ads"
         }
 
         # Generate insights report
         insights_report = f"""
-        **Marketing Insights Report for {product}**
+       \n\n Marketing Insights Report for {product}  \n
 
-        ### Budget Allocation:
-        - **{best_ad_type}:** {ad_performance_results["budget_allocation"]}%
-        - **{best_ad_placement}:** {customer_behavior_results["budget_allocation"]}%
-        - **Display Ads:** {remaining_allocation}%
+        \n Budget Allocation: \n
+        - {best_ad_type}: {ad_performance_results["budget_allocation"]}%
+        - {best_ad_placement}: {customer_behavior_results["budget_allocation"]}%
+        - Display Ads: {remaining_allocation}%
 
-        ### Performance Metrics:
-        - **Best Performing Ad Type:** {best_ad_type}
+        \n\n Performance Metrics: \n
+        - Best Performing Ad Type: {best_ad_type} 
           - Conversion Rate: {ad_performance_results["conversion_rate"]}
           - CTR: {ad_performance_results["CTR"]}
-        - **Most Engaging Marketing Channel:** {best_ad_placement}
+        - Most Engaging Marketing Channel: {best_ad_placement}
           - Total Clicks: {customer_behavior_results["clicks"]}
           - Avg Conversion Rate: {customer_behavior_results["avg_conversion_rate"]}
 
-        ### AI-Generated Marketing Strategy:
-        {marketing_strategy}
+        \n\n AI-Generated Marketing Strategy: \n \n
+        {marketing_strategy} \n\n
         """
 
         return {

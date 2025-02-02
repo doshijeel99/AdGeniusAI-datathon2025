@@ -16,7 +16,7 @@ app.post('/generate-content', async (req, res) => {
   }
 
   // Create a prompt based on the platform and user input
-  const systemPrompt = `<s>[INST] You are an expert social media marketer. Generate high-converting, platform-specific content that maximizes engagement and conversions.  
+  const systemPrompt = `<s>[INST] You are an expert social media marketer. Generate high-converting, platform-specific content that maximizes engagement and conversions. Do not Hallucinate. Use only English,no other language.  
 
 **Platform:** ${platform}  
 **Product/Service:** ${prompt}  
