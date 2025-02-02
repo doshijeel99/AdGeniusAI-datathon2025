@@ -39,42 +39,42 @@ function MarketNews() {
       title: "AI Revolution in Digital Marketing",
       description: "How artificial intelligence is transforming digital marketing strategies and customer engagement in 2024.",
       source: "Marketing Weekly",
-      date: "2024-03-15",
+      date: "2025-01-15",
       category: "Technology"
     },
     {
       title: "Social Commerce Trends 2024",
       description: "The rise of social shopping and its impact on e-commerce platforms and consumer behavior.",
       source: "Digital Trends",
-      date: "2024-03-14",
+      date: "2025-01-14",
       category: "E-commerce"
     },
     {
       title: "Video Marketing Statistics",
       description: "Latest statistics show 85% increase in video content consumption across marketing channels.",
       source: "Marketing Insights",
-      date: "2024-03-13",
+      date: "2025-01-13",
       category: "Content"
     },
     {
       title: "Sustainable Marketing Practices",
       description: "Companies adopting eco-friendly marketing strategies see 40% increase in brand loyalty.",
       source: "Green Business Today",
-      date: "2024-03-12",
+      date: "2025-01-12",
       category: "Sustainability"
     },
     {
       title: "Mobile Marketing Optimization",
       description: "Best practices for optimizing marketing campaigns for mobile-first consumers in 2024.",
       source: "Mobile Marketing Daily",
-      date: "2024-03-11",
+      date: "2025-01-11",
       category: "Mobile"
     },
     {
       title: "Influencer Marketing ROI",
       description: "New study reveals key metrics for measuring influencer marketing success and ROI.",
       source: "Marketing Analytics",
-      date: "2024-03-10",
+      date: "2025-01-10",
       category: "Social Media"
     }
   ];
@@ -90,12 +90,12 @@ function MarketNews() {
 
   // Monthly engagement data
   const engagementData = [
-    { month: 'Jan', social: 4000, email: 2400, seo: 2400 },
-    { month: 'Feb', social: 3000, email: 1398, seo: 2210 },
-    { month: 'Mar', social: 2000, email: 9800, seo: 2290 },
-    { month: 'Apr', social: 2780, email: 3908, seo: 2000 },
-    { month: 'May', social: 1890, email: 4800, seo: 2181 },
-    { month: 'Jun', social: 2390, email: 3800, seo: 2500 }
+    { month: 'July', social: 4000, email: 2400, seo: 2400 },
+    { month: 'Aug', social: 3000, email: 1398, seo: 2210 },
+    { month: 'Sept', social: 2000, email: 9800, seo: 2290 },
+    { month: 'Oct', social: 2780, email: 3908, seo: 2000 },
+    { month: 'Nov', social: 1890, email: 4800, seo: 2181 },
+    { month: 'Dec', social: 2390, email: 3800, seo: 2500 }
   ];
 
   // Campaign performance data
