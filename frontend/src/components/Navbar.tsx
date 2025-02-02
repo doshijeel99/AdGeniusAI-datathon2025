@@ -57,7 +57,7 @@ function Navbar() {
           }
         >
           <BarChart2 className="w-5 h-5" />
-          <span>Reports Analyzis </span>
+          <span>Reports Analysis </span>
         </NavLink>
 
         <NavLink
