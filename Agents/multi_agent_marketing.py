@@ -1,5 +1,5 @@
-from fastapi import FastAPI, HTTPException
-from fastapi.middleware.cors import CORSMiddleware  # Import CORSMiddleware
+from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.middleware.cors import CORSMiddleware
 from pydantic import BaseModel
 from langchain.llms import HuggingFacePipeline
 from langchain.agents import initialize_agent, Tool
@@ -7,6 +7,8 @@ from langchain.tools import tool
 from transformers import AutoModelForCausalLM, AutoTokenizer, pipeline, BitsAndBytesConfig
 import pandas as pd
 import torch
+import asyncio
+from functools import lru_cache
 
 # Load datasets
 ad_performance_data = pd.read_csv("D:/Projects/Datazen/AdGeniusAI-datathon2025/Data/ad_performance.csv")
@@ -55,6 +57,7 @@ llm = HuggingFacePipeline(pipeline=pipe)
 
 # Define AI Agents
 @tool
+@lru_cache(maxsize=100)
 def analyze_ad_performance(product: str):
     """Analyzes ad performance data to identify the highest ROI ad types."""
     performance_summary = ad_performance_data.groupby("Ad Type").agg({
@@ -75,6 +78,7 @@ def analyze_ad_performance(product: str):
     }
 
 @tool
+@lru_cache(maxsize=100)
 def analyze_customer_behavior(product: str):
     """Examines customer behavior trends to determine the most engaging marketing channels."""
     if "Channel_Used" not in customer_behavior_data.columns:
@@ -98,6 +102,7 @@ def analyze_customer_behavior(product: str):
     }
 
 @tool
+@lru_cache(maxsize=100)
 def generate_marketing_strategy(product: str):
     """Generates AI-driven marketing insights, ad copy, and audience segmentation for the product."""
     prompt = f"""
@@ -125,7 +130,7 @@ tools = [analyze_ad_performance, analyze_customer_behavior, generate_marketing_s
 marketing_agent = initialize_agent(tools, llm, agent="zero-shot-react-description", verbose=True)
 
 @app.post("/multi_agent_analysis")
-async def multi_agent_analysis(request: ProductRequest):
+async def multi_agent_analysis(request: ProductRequest, background_tasks: BackgroundTasks):
     try:
         product = request.product
 
@@ -160,9 +165,9 @@ async def multi_agent_analysis(request: ProductRequest):
         \n Budget Allocation: \n
         - {best_ad_type}: {ad_performance_results["budget_allocation"]}%
         - {best_ad_placement}: {customer_behavior_results["budget_allocation"]}%
-        - Display Ads: {remaining_allocation}%
+        - Display Ads: {remaining_allocation}% \n
 
-        \n\n Performance Metrics: \n
+        \n \n Performance Metrics: \n
         - Best Performing Ad Type: {best_ad_type} 
           - Conversion Rate: {ad_performance_results["conversion_rate"]}
           - CTR: {ad_performance_results["CTR"]}
